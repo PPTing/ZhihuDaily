@@ -10,8 +10,18 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.util.EntityUtils;
+
+import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,6 +37,7 @@ public class MainActivity extends ActionBarActivity {
     @Bind(R.id.drawerlayout)
     DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
+    private String mUrl;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,9 +45,32 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
         setupToolbar();
-        if (mNavigationView == null) {
-            setupDrawerContent();
-        }
+        if (mNavigationView == null) {setupDrawerContent();}
+        getZhihuInfo();
+    }
+    //获取知乎返回的json
+    private void getZhihuInfo() {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                HttpClient httpClient = new DefaultHttpClient();
+                mUrl = "http://news-at.zhihu.com/api/1.2/news/latest";
+                HttpGet mHttpGet = new HttpGet(mUrl);
+                try {
+                    HttpResponse httpResponse = httpClient.execute(mHttpGet);
+                    if (httpResponse.getStatusLine().getStatusCode() == 200)
+                    {
+                        HttpEntity entity = httpResponse.getEntity();
+                        String response = EntityUtils.toString(entity, "UTF-8");
+                        Log.d("MainActivity","response is "+response);
+                        AnalyzeJson mAnalyzeJson = new AnalyzeJson();
+                        mAnalyzeJson.AnalyzeData(response);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
     private void setupDrawerContent() {
@@ -60,7 +94,7 @@ public class MainActivity extends ActionBarActivity {
 //                    case R.id.aboutme:
 //                        return startIntent(AboutMeActivity.class);
 //                    default:
-                        return true;
+                return true;
 //                }
             }
         });
@@ -93,4 +127,6 @@ public class MainActivity extends ActionBarActivity {
         startActivity(new Intent(MainActivity.this, mClass));
         return true;
     }
+
+
 }
