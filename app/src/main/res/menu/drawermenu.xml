@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_height="match_parent"
+    android:layout_width="match_parent"
+    android:checkableBehavior="none">
+
+    <group
+        android:id="@+id/group1"
+        android:checkableBehavior="none">
+            <item
+                android:id="@+id/happy"
+
+                android:title="生日快乐"/>
+            <item
+                android:id="@+id/movie"
+                android:title="一起看过的电影"/>
+            <item
+                android:id="@+id/music"
+                android:title="一起听过的歌谣"/>
+            <item
+                android:id="@+id/life"
+                android:title="一起走过的路"/>
+    </group>
+    <group
+        android:id="@+id/group2"
+        android:checkableBehavior="none">
+            <item
+                android:id="@+id/aboutme"
+                android:checked="false"
+                android:title="关于我"/>
+    </group>
+
+</menu>
+    <!--android:icon="@drawable/ic_cake_24dp"-->
+    <!--android:icon="@drawable/ic_local_movies_24dp"-->
+    <!--android:icon="@drawable/ic_headset_24dp"-->
+    <!--android:icon="@drawable/ic_directions_bike_24dp"-->
