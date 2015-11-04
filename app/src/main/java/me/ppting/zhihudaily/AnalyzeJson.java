@@ -13,9 +13,9 @@ import java.util.zip.GZIPOutputStream;
  */
 public class AnalyzeJson {
     private static String TAG = AnalyzeJson.class.getName();
-    public List<ZhihuInfo> AnalyzeData(String jsonData)
+    public List<ZhihuBean> AnalyzeData(String jsonData)
     {
-        List<ZhihuInfo> mZhihuInfoList = new ArrayList<>();
+        List<ZhihuBean> mZhihuInfoList = new ArrayList<>();
         Gson gson = new Gson();
         ZhihuInfo mZhihuInfo = gson.fromJson(jsonData,ZhihuInfo.class);
         try {
@@ -24,7 +24,9 @@ public class AnalyzeJson {
                 ZhihuBean mZhihuBean = new ZhihuBean();
                 Log.d(TAG,"i is "+i);
                 mZhihuBean.title = mZhihuInfo.getNews().get(i).getTitle();
+                mZhihuBean.thumbnailUrl = mZhihuInfo.getNews().get(i).getThumbnail();
                 Log.d("AnalyzeJson", "title is " + mZhihuInfo.getNews().get(i).getTitle());
+                mZhihuInfoList.add(mZhihuBean);
             }
         }catch (Exception e)
         {

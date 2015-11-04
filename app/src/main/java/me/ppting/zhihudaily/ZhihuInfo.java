@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Gson解析类
+ * api是 http://news-at.zhihu.com/api/1.2/news/latest
  * Created by PPTing on 15/11/3.
  */
 public class ZhihuInfo {
