@@ -14,6 +14,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
 import org.apache.http.HttpEntity;
@@ -55,8 +56,6 @@ public class MainActivity extends ActionBarActivity {
             setupDrawerContent();
         }
         getZhihuInfo();
-
-
     }
 
     //获取知乎返回的json
@@ -150,13 +149,24 @@ public class MainActivity extends ActionBarActivity {
         }
 
         @Override
-        protected void onPostExecute(List<ZhihuBean> zhihuBeans) {
+        protected void onPostExecute(final List<ZhihuBean> zhihuBeans) {
             super.onPostExecute(zhihuBeans);
             Log.d(TAG,"zhihuBeans is "+zhihuBeans);
             ZhihuAdapter zhihuAdapter = new ZhihuAdapter(MainActivity.this, zhihuBeans);
             mRecyclerview.setAdapter(zhihuAdapter);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
             mRecyclerview.setLayoutManager(mLayoutManager);
+            zhihuAdapter.setOnClickListener(new ZhihuAdapter.OnItemClickListener() {
+                @Override
+                public void OnItemClick(View view, int position) {
+                    Log.d(TAG, "Click item");
+                    Intent intent = new Intent(MainActivity.this,ConmentActivity.class);
+                    intent.putExtra("title",zhihuBeans.get(position).title);
+                    intent.putExtra("image",zhihuBeans.get(position).imageUrl);
+                    intent.putExtra("content",zhihuBeans.get(position).shareUrl);
+                    startActivity(intent);
+                }
+            });
         }
 
 

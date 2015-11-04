@@ -25,6 +25,8 @@ public class AnalyzeJson {
                 Log.d(TAG,"i is "+i);
                 mZhihuBean.title = mZhihuInfo.getNews().get(i).getTitle();
                 mZhihuBean.thumbnailUrl = mZhihuInfo.getNews().get(i).getThumbnail();
+                mZhihuBean.imageUrl = mZhihuInfo.getNews().get(i).getImage();
+                mZhihuBean.shareUrl = mZhihuInfo.getNews().get(i).getShare_url();
                 Log.d("AnalyzeJson", "title is " + mZhihuInfo.getNews().get(i).getTitle());
                 mZhihuInfoList.add(mZhihuBean);
             }

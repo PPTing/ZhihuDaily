@@ -26,6 +26,15 @@ public class ZhihuAdapter extends RecyclerView.Adapter<ZhihuAdapter.MyViewHolder
         this.mDataList = data;
         mLayoutInflater = LayoutInflater.from(context);
     }
+    public interface OnItemClickListener
+    {
+        void OnItemClick(View view,int position);
+    }
+    private OnItemClickListener onItemClickListener;
+    public void setOnClickListener(OnItemClickListener mOnItemClickListener)
+    {
+        this.onItemClickListener = mOnItemClickListener;
+    }
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = mLayoutInflater.inflate(R.layout.cardview,parent,false);
@@ -34,7 +43,7 @@ public class ZhihuAdapter extends RecyclerView.Adapter<ZhihuAdapter.MyViewHolder
     }
 
     @Override
-    public void onBindViewHolder(MyViewHolder holder, int position) {
+    public void onBindViewHolder(final MyViewHolder holder, int position) {
         Log.d("ZhihuAdapter","title is "+mDataList.get(position).title);
         holder.mTextView.setText(mDataList.get(position).title);
 
@@ -42,6 +51,18 @@ public class ZhihuAdapter extends RecyclerView.Adapter<ZhihuAdapter.MyViewHolder
         String mUrl = mDataList.get(position).thumbnailUrl;
         holder.mImageView.setTag(mUrl);
         pictureLoader.showImageByAsyncTask(holder.mImageView,mUrl);
+
+        if (onItemClickListener!=null)
+        {
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    int position = holder.getLayoutPosition();
+                    onItemClickListener.OnItemClick(holder.itemView,position);
+                }
+            });
+        }
+
     }
 
     @Override
