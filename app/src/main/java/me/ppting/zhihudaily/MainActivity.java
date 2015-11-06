@@ -6,15 +6,16 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.TabLayout;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.text.format.Time;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 
 import org.apache.http.HttpEntity;
@@ -25,6 +26,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
@@ -42,9 +44,12 @@ public class MainActivity extends ActionBarActivity {
     DrawerLayout mDrawerLayout;
     @Bind(R.id.recyclerview)
     RecyclerView mRecyclerview;
+    @Bind(R.id.tablayout)
+    TabLayout mTablayout;
     private ActionBarDrawerToggle mActionBarDrawerToggle;
     private String mUrl;
     private static String TAG = MainActivity.class.getName();
+    private String mDate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +61,38 @@ public class MainActivity extends ActionBarActivity {
             setupDrawerContent();
         }
         getZhihuInfo();
+        getDate();
+        setupTablayout();
+    }
+
+
+    private void getDate() {
+        Time mTime = new Time();
+        mTime.setToNow();
+        int mYear = mTime.year;
+        int mMonth = mTime.month + 1;
+        int mDay = mTime.monthDay + 1;
+        Log.d("MainActivity", "mMonth is " + mMonth);
+        if (mTime.monthDay < 10) {
+            mDate = mYear + "" + mMonth + "0" + mDay;
+        } else {
+            mDate = mYear + "" + mMonth + mDay;
+        }
+        Log.d("MainActivity", "today's date is " + mDate);
+    }
+
+    private void setupTablayout() {
+        List<String> mDateList = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            int mId = Integer.parseInt(mDate);
+            String mIdList = String.valueOf(mId + 1 - i);
+            mDateList.add(mIdList);
+            Log.d("MainActivity", "mIdList is " + mIdList);
+        }
+        mTablayout.setTabMode(TabLayout.MODE_SCROLLABLE);
+        for (int k = 0; k < mDateList.size(); k++) {
+            mTablayout.addTab(mTablayout.newTab().setText(mDateList.get(k)));
+        }
     }
 
     //获取知乎返回的json
@@ -64,7 +101,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
                 HttpClient httpClient = new DefaultHttpClient();
-                mUrl = "http://news-at.zhihu.com/api/1.2/news/latest";
+                mUrl = "http://news.at.zhihu.com/api/4/news/before/20151107";
                 HttpGet mHttpGet = new HttpGet(mUrl);
                 try {
                     HttpResponse httpResponse = httpClient.execute(mHttpGet);
@@ -143,7 +180,7 @@ public class MainActivity extends ActionBarActivity {
     class MyAsyncTask extends AsyncTask<String, Void, List<ZhihuBean>> {
         @Override
         protected List<ZhihuBean> doInBackground(String... params) {
-            Log.d(TAG,"传入的JsonData是 "+params[0]);
+            Log.d(TAG, "传入的JsonData是 " + params[0]);
             List<ZhihuBean> response = new AnalyzeJson().AnalyzeData(params[0]);
             return response;
         }
@@ -151,7 +188,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         protected void onPostExecute(final List<ZhihuBean> zhihuBeans) {
             super.onPostExecute(zhihuBeans);
-            Log.d(TAG,"zhihuBeans is "+zhihuBeans);
+            Log.d(TAG, "zhihuBeans is " + zhihuBeans);
             ZhihuAdapter zhihuAdapter = new ZhihuAdapter(MainActivity.this, zhihuBeans);
             mRecyclerview.setAdapter(zhihuAdapter);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(MainActivity.this, LinearLayoutManager.VERTICAL, false);
@@ -160,10 +197,10 @@ public class MainActivity extends ActionBarActivity {
                 @Override
                 public void OnItemClick(View view, int position) {
                     Log.d(TAG, "Click item");
-                    Intent intent = new Intent(MainActivity.this,ConmentActivity.class);
-                    intent.putExtra("title",zhihuBeans.get(position).title);
-                    intent.putExtra("image",zhihuBeans.get(position).imageUrl);
-                    intent.putExtra("content",zhihuBeans.get(position).shareUrl);
+                    Intent intent = new Intent(MainActivity.this, ConmentActivity.class);
+//                    intent.putExtra("title", zhihuBeans.get(position).title);
+//                    intent.putExtra("image", zhihuBeans.get(position).imageUrl);
+//                    intent.putExtra("content", zhihuBeans.get(position).shareUrl);
                     startActivity(intent);
                 }
             });

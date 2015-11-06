@@ -1,5 +1,6 @@
 package me.ppting.zhihudaily;
 
+import android.text.Html;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -19,15 +20,15 @@ public class AnalyzeJson {
         Gson gson = new Gson();
         ZhihuInfo mZhihuInfo = gson.fromJson(jsonData,ZhihuInfo.class);
         try {
-            Log.d(TAG, "news's size is " + mZhihuInfo.getNews().size());
-            for (int i = 1; i < mZhihuInfo.getNews().size(); i++) {
+            Log.d(TAG, "news's size is " + mZhihuInfo.getStories().size());
+            for (int i = 1; i < mZhihuInfo.getStories().size(); i++) {
                 ZhihuBean mZhihuBean = new ZhihuBean();
                 Log.d(TAG,"i is "+i);
-                mZhihuBean.title = mZhihuInfo.getNews().get(i).getTitle();
-                mZhihuBean.thumbnailUrl = mZhihuInfo.getNews().get(i).getThumbnail();
-                mZhihuBean.imageUrl = mZhihuInfo.getNews().get(i).getImage();
-                mZhihuBean.shareUrl = mZhihuInfo.getNews().get(i).getShare_url();
-                Log.d("AnalyzeJson", "title is " + mZhihuInfo.getNews().get(i).getTitle());
+                mZhihuBean.title = mZhihuInfo.getStories().get(i).getTitle();
+                String mImagesUrl = String.valueOf(mZhihuInfo.getStories().get(i).getImages()).replaceAll("\\[|\\]", "");;
+                mZhihuBean.thumbnailUrl = mImagesUrl;
+                mZhihuBean.id = mZhihuInfo.getStories().get(i).getId();
+                Log.d("AnalyzeJson", "title is " + mZhihuInfo.getStories().get(i).getTitle());
                 mZhihuInfoList.add(mZhihuBean);
             }
         }catch (Exception e)

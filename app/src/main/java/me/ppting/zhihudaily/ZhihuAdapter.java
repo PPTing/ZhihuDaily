@@ -49,6 +49,8 @@ public class ZhihuAdapter extends RecyclerView.Adapter<ZhihuAdapter.MyViewHolder
 
         PictureLoader pictureLoader = new PictureLoader();
         String mUrl = mDataList.get(position).thumbnailUrl;
+        Log.d("ZhihuAdapter","mUrl is "+mUrl);
+
         holder.mImageView.setTag(mUrl);
         pictureLoader.showImageByAsyncTask(holder.mImageView,mUrl);
 
