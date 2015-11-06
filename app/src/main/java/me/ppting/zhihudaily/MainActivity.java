@@ -56,12 +56,13 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        getDate();
         setupToolbar();
         if (mNavigationView == null) {
             setupDrawerContent();
         }
         getZhihuInfo();
-        getDate();
+
         setupTablayout();
     }
 
@@ -101,7 +102,8 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void run() {
                 HttpClient httpClient = new DefaultHttpClient();
-                mUrl = "http://news.at.zhihu.com/api/4/news/before/20151107";
+                Log.d("getZhiHuInfo","mDate is "+mDate);
+                mUrl = "http://news.at.zhihu.com/api/1.2/news/before/"+mDate;
                 HttpGet mHttpGet = new HttpGet(mUrl);
                 try {
                     HttpResponse httpResponse = httpClient.execute(mHttpGet);
@@ -111,7 +113,7 @@ public class MainActivity extends ActionBarActivity {
                         Log.d("MainActivity", "response is " + response);
                         //AnalyzeJson mAnalyzeJson = new AnalyzeJson();
                         //mAnalyzeJson.AnalyzeData(response);
-
+                        //异步加载标题和缩略图
                         MyAsyncTask myAsyncTask = new MyAsyncTask();
                         myAsyncTask.execute(response);
                     }
