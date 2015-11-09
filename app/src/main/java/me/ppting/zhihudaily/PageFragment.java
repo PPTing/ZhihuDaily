@@ -1,5 +1,6 @@
 package me.ppting.zhihudaily;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -59,7 +60,17 @@ public class PageFragment extends Fragment {
         getDate();
         getZhihuInfo();
         ButterKnife.bind(this, view);
+        setFabShowOrHide();
         return view;
+    }
+
+    private void setFabShowOrHide() {
+        mRecyclerview.setOnScrollListener(new RecyclerView.OnScrollListener() {
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+            }
+        });
     }
 
     private void getDate() {
@@ -133,17 +144,17 @@ public class PageFragment extends Fragment {
             mRecyclerview.setAdapter(zhihuAdapter);
             RecyclerView.LayoutManager mLayoutManager = new LinearLayoutManager(getActivity(), LinearLayoutManager.VERTICAL, false);
             mRecyclerview.setLayoutManager(mLayoutManager);
-//            zhihuAdapter.setOnClickListener(new ZhihuAdapter.OnItemClickListener() {
-//                @Override
-//                public void OnItemClick(View view, int position) {
-//                    Log.d(TAG, "Click item");
-//                    Intent intent = new Intent(MainActivity.this, ConmentActivity.class);
-//                    intent.putExtra("title", zhihuBeans.get(position).title);
-//                    intent.putExtra("image", zhihuBeans.get(position).imageUrl);
-//                    intent.putExtra("content", zhihuBeans.get(position).shareUrl);
-//                    startActivity(intent);
-//                }
-//            });
+            zhihuAdapter.setOnClickListener(new ZhihuAdapter.OnItemClickListener() {
+                @Override
+                public void OnItemClick(View view, int position) {
+                    Log.d(TAG, "Click item");
+                    Intent intent = new Intent(getActivity(), ConmentActivity.class);
+                    intent.putExtra("title", zhihuBeans.get(position).title);
+                    intent.putExtra("image", zhihuBeans.get(position).imageUrl);
+                    intent.putExtra("content", zhihuBeans.get(position).shareUrl);
+                    startActivity(intent);
+                }
+            });
         }
 
 
