@@ -5,6 +5,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.format.Time;
@@ -34,6 +35,8 @@ public class PageFragment extends Fragment {
     private static final String TAG = PageFragment.class.getName();
     @Bind(R.id.recyclerview)
     RecyclerView mRecyclerview;
+    @Bind(R.id.refresh)
+    SwipeRefreshLayout mRefresh;
     private int mPage;
     private String mDate;
     private String mUrl;
@@ -57,21 +60,21 @@ public class PageFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment, container, false);
+        ButterKnife.bind(this, view);
         getDate();
         getZhihuInfo();
-        ButterKnife.bind(this, view);
-        setFabShowOrHide();
+        mRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                Log.d(TAG, "refresh");
+                getZhihuInfo();
+                mRefresh.setRefreshing(false);
+            }
+        });
+        mRefresh.setColorSchemeColors(R.color.colorAccent, R.color.colorPrimary, R.color.colorPrimaryDark);
         return view;
     }
 
-    private void setFabShowOrHide() {
-        mRecyclerview.setOnScrollListener(new RecyclerView.OnScrollListener() {
-            @Override
-            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-            }
-        });
-    }
 
     private void getDate() {
         Time mTime = new Time();
@@ -79,13 +82,13 @@ public class PageFragment extends Fragment {
         int mYear = mTime.year;
         int mMonth = mTime.month + 1;
         int mDay = mTime.monthDay + 1;
-        Log.d("MainActivity", "mMonth is " + mMonth);
-        if (mTime.monthDay < 10) {
+        Log.d("PageFragment", "mMonth is " + mDay);
+        if (mDay < 10) {
             mDate = mYear + "" + mMonth + "0" + mDay;
         } else {
             mDate = mYear + "" + mMonth + mDay;
         }
-        Log.d("MainActivity", "today's date is " + mDate);
+        Log.d("PageFragment", "today's date is " + mDate);
     }
 
     //获取知乎返回的json
@@ -97,10 +100,10 @@ public class PageFragment extends Fragment {
                 Log.d("getZhiHuInfo", "mDate is " + mDate);
                 int mDateId = Integer.parseInt(mDate) - mPage;
 
-                Log.d(TAG,"mDateId is "+mDateId);
+                Log.d(TAG, "mDateId is " + mDateId);
                 mUrl = String.format("http://news.at.zhihu.com/api/1.2/news/before/%s", mDateId);
-                Log.d(TAG,"mPage is "+mPage);
-                Log.d(TAG,"mUrl is "+mUrl);
+                Log.d(TAG, "mPage is " + mPage);
+                Log.d(TAG, "mUrl is " + mUrl);
                 HttpGet mHttpGet = new HttpGet(mUrl);
                 try {
                     HttpResponse httpResponse = httpClient.execute(mHttpGet);
